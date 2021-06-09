@@ -1,0 +1,39 @@
+您好~
+
+若步驟成功，基本上不需要使用使用到 ps:scale 指令
+至於 Dyno 只是 heroku 的雲端伺服器使用單位
+
+您的問題在於檔案名稱大小寫有問題 procfile 是 Procfile 才對，不然會造成 heroku 無法讀到是哪一種 type，從 build log 可以看出 (none)。Procfile 為告訴 heroku 要如何執行我們的程式和要執行的指令及應用屬於哪一種類型
+
+
+
+修正步驟如下:
+
+終端機指令於專案資料夾內先把 錯誤檔案移除並移除 GIT 追蹤
+
+git rm procfile
+此時回到 vs code 專案資料夾下新增 Procfile 檔案 (一行就好)
+
+web: gunicorn task1:app
+回到終端機加入新檔案
+
+git add Procfile
+確認目前狀態
+
+git status
+重新 git commit
+
+git commit -a -m "fix Procfile name"
+推送上去遠端
+
+git push heroku master
+此時 log 應該會顯示偵測到 (web) 就是正確
+
+
+通常錯誤我們可以在 log 中找到，例如：
+
+ImportError: lxml not found, please install it
+代表可能有少安裝套件。其中 requirements.txt 是負責管理套件的安裝，heroku 每次更新會依照這個檔案安裝套件。可以多加上一行安裝 lxml 這個解析網頁的工具套件：
+
+lxml==4.3.4
+然後重新 git commit 後提交上去 heroku
